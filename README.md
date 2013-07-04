@@ -2,10 +2,15 @@
 
 http://rexify.org/
 
-Usage
+## Usage
+
+Installation
 
 1. [get rex](http://rexify.org/get/index.html)
 1. clone this repo and change to it, ex.: `git clone https://github.com/jreisinger/rex.git && cd rex`
+
+Amazon stuff
+
 1. create file containing Amazon security credentials
 
         touch .pass.yml
@@ -22,6 +27,9 @@ Usage
 1. secure the private key
 
         chmod 600 .priv-key.pem
+
+Run tasks
+
 1. list tasks: `rex -T`
 1. run your task: `rex <task>`, ex.:
 
