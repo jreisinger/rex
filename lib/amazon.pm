@@ -59,8 +59,8 @@ sub vm_name2id {
 # Tasks
 ####################
 
-desc "List all VMs and volumes";
-task "list", sub {
+desc "List all VMs and volumes (raw format)";
+task "dump", sub {
     print Dumper cloud_instance_list;
     print Dumper cloud_volume_list;
 };
@@ -69,6 +69,7 @@ desc "List running VMs";
 task "list-running", sub {
     for my $instance ( cloud_instance_list() ) {
         if ( $instance->{"state"} eq "running" ) {
+            print "\n";
             say "NAME  : " . $instance->{"name"};
             say "IP    : " . $instance->{"ip"};
             say "ID    : " . $instance->{"id"};
@@ -76,8 +77,8 @@ task "list-running", sub {
     }
 };
 
-desc "List VMs by name";
-task "list-names", sub {
+desc "List all VMs";
+task "list", sub {
     for my $instance ( cloud_instance_list() ) {
         print "\n";
         say "NAME  : " . ( $instance->{"name"}  // "n/a" );
@@ -90,19 +91,21 @@ task "list-names", sub {
 desc "Create VM: $0 create --name=<vm-name>";
 task "create", sub {
     my $params = shift;
-    unless ( $params->{name} ) {
+    my $name   = $params->{name};
+    unless ( defined $name ) {
         print STDERR "Usage: $0 create --name=<vm-name>\n";
         return;
     }
-    my $name = $params->{name};
     cloud_instance create => {
         image_id => "ami-02103876",
         name     => $name,
         key      => "rex",
     };
+    my ($instance) = grep { $_->{name} eq $name } cloud_instance_list();
+    say $instance->{ip};
 };
 
-desc "Destroy VM: $0 destroy --name=<vm-name>\n";
+desc "Destroy VM: $0 destroy --name=<vm-name>";
 task "destroy", sub {
     my $params = shift;
     unless ( $params->{name} ) {
