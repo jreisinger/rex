@@ -14,6 +14,7 @@ use Data::Dumper;
 my $pass_file = File::Spec->catfile( $ENV{PWD}, ".pass.yml" );
 return 0 unless file_exists($pass_file);
 my $content = eval { local ( @ARGV, $/ ) = ($pass_file); <>; };
+
 # load yaml into perl hashRef
 my $config = Load($content);
 
@@ -43,25 +44,46 @@ sub file_exists {
 }
 
 ####################
+sub vm_name2id {
+####################
+    my $name = shift;
+
+    for my $instance ( cloud_instance_list() ) {
+        if ( $instance->{"name"} eq "$name" ) {
+            return $instance->{"id"};
+        }
+    }
+}
+
+####################
 # Tasks
 ####################
 
 desc "List all VMs and volumes";
 task "list", sub {
-     print Dumper cloud_instance_list;
-     print Dumper cloud_volume_list;
+    print Dumper cloud_instance_list;
+    print Dumper cloud_volume_list;
 };
 
 desc "List running VMs";
 task "list-running", sub {
-    for my $instance ( cloud_instance_list() )
-    {
-        if ( $instance->{"state"} eq "running" )
-        {
+    for my $instance ( cloud_instance_list() ) {
+        if ( $instance->{"state"} eq "running" ) {
             say "NAME  : " . $instance->{"name"};
             say "IP    : " . $instance->{"ip"};
             say "ID    : " . $instance->{"id"};
         }
+    }
+};
+
+desc "List VMs by name";
+task "list-names", sub {
+    for my $instance ( cloud_instance_list() ) {
+        print "\n";
+        say "NAME  : " . ( $instance->{"name"}  // "n/a" );
+        say "IP    : " . ( $instance->{"ip"}    // "n/a" );
+        say "ID    : " . ( $instance->{"id"}    // "n/a" );
+        say "STATE : " . ( $instance->{"state"} // "n/a" );
     }
 };
 
@@ -80,14 +102,14 @@ task "create", sub {
     };
 };
 
-desc "Destroy VM: $0 destroy --instance_id=<instance_id>";
+desc "Destroy VM: $0 destroy --name=<vm-name>\n";
 task "destroy", sub {
     my $params = shift;
-    unless ( $params->{instance_id} ) {
-        print STDERR "Usage: $0 destroy --instance_id=<instance_id>\n";
+    unless ( $params->{name} ) {
+        print STDERR "Usage: $0 destroy --name=<vm-name>\n";
         return;
     }
-    my $instance_id = $params->{instance_id};
+    my $instance_id = vm_name2id( $params->{name} );
     cloud_instance terminate => "$instance_id";
 };
 
