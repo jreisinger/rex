@@ -35,4 +35,5 @@ Run tasks
 
         rex amazon:list
         rex amazon:create --name=vm01
-        rex -H 46.137.151.9 sw:apache
+        rex -H <ip-address> sw:apache
+        rex amazon:destroy --name=vm01
