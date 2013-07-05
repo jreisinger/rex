@@ -11,19 +11,26 @@ Installation
 
 Amazon stuff
 
+1. Register at http://aws.amazon.com/
+1. Get your AccessKey and your Secret AccessKey
+1. Create a key-pair and save it to your disk
+1. Create a public key out of your just downloaded private key. You can do this with `ssh-keygen -y -f your-aws-private-key.pem`
 1. create file containing Amazon security credentials
 
         touch .pass.yml
         chmod 600 .pass.yml
+
 1. edit `.pass.yml`:
 
         auth:
             access_key: <AWSAccessKeyId>
             password: <AWSSecretKey>
+
 1. create key pair in Amazon portal and store it as
 
         .priv-key.pem
         .pub-key.key
+
 1. secure the private key
 
         chmod 600 .priv-key.pem
