@@ -56,6 +56,12 @@ sub vm_name2id {
 # Tasks
 ####################
 
+desc "Dump cloud regions and zones";
+task "dump-cloud-info", sub {
+    print Dumper get_cloud_regions;
+    print Dumper get_cloud_availability_zones;
+};
+
 desc "List all VMs and volumes (raw format)";
 task "dump", sub {
     print Dumper cloud_instance_list;
