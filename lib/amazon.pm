@@ -20,9 +20,10 @@ my $config = Load($content);
 
 my $access_key        = $config->{auth}->{access_key};
 my $secret_access_key = $config->{auth}->{password};
+my $cloud_region      = $config->{cloud}->{region};
 cloud_service "Amazon";
 cloud_auth "$access_key", "$secret_access_key";
-cloud_region "ec2.eu-west-1.amazonaws.com";
+cloud_region $cloud_region;
 
 ####################
 # Helper subroutines
