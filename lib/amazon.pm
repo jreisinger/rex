@@ -91,16 +91,18 @@ task "list", sub {
     }
 };
 
-desc "Create VM: $0 create --name=<vm-name>";
+desc "Create VM";
 task "create", sub {
-    my $params = shift;
-    my $name   = $params->{name};
-    unless ( defined $name ) {
-        print STDERR "Usage: $0 create --name=<vm-name>\n";
+    my $params   = shift;
+    my $name     = $params->{name};
+    my $image_id = $params->{image_id};
+    unless ( defined $name and defined $image_id ) {
+        print STDERR "Usage: $0 create --name=<vm-name> --image_id=<image-ID>\n";
         return;
     }
     cloud_instance create => {
-        image_id => "ami-02103876",
+        #image_id => "ami-02103876",
+        image_id => $image_id,
         name     => $name,
         key      => "rex",
     };
@@ -108,7 +110,7 @@ task "create", sub {
     say $instance->{ip};
 };
 
-desc "Destroy VM: $0 destroy --name=<vm-name>";
+desc "Destroy VM";
 task "destroy", sub {
     my $params = shift;
     unless ( $params->{name} ) {
